@@ -1,11 +1,39 @@
 import model from "../model/bootcamp.js";
 
-export const getBootcamps = (req, res, next) => {
-  console.log("req.helo from getBootcamps", req.hello);
-  res.status(200).json({ success: true, msg: "Show all bootcamps" });
+export const getBootcamps = async (req, res, next) => {
+  try {
+    const bootcamp = await model.find();
+    res.status(200).json({
+      success: true,
+      data: bootcamp,
+    });
+  } catch (error) {
+    res.status(400).json({
+      success: false,
+      error: error.message,
+    });
+  }
 };
 
-export const getBootcamp = (req, res, next) => {
+export const getBootcamp = async (req, res, next) => {
+  try {
+    const bootcamp = await model.findById(req.params.id);
+    if (!bootcamp) {
+      return res.status(400).json({
+        success: false,
+        data: "No Data found!",
+      });
+    }
+    return res.status(200).json({
+      success: true,
+      data: bootcamp,
+    });
+  } catch (error) {
+    res.status(400).json({
+      success: false,
+      error: error.message,
+    });
+  }
   res
     .status(200)
     .json({ success: true, msg: `Show bootcamp ${req.params.id}` });
