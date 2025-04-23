@@ -48,14 +48,46 @@ export const createBootcamp = async (req, res, next) => {
   }
 };
 
-export const updateBootcamp = (req, res, next) => {
-  res
-    .status(200)
-    .json({ success: true, msg: `Update bootcamp ${req.params.id}` });
+export const updateBootcamp = async (req, res, next) => {
+  try {
+    const bootcamp = await model.findByIdAndUpdate(req.params.id, req.body, {
+      new: true,
+      runValidators: true,
+    });
+    if (!bootcamp) {
+      res.status(400).json({
+        success: false,
+        data: "No data found to update",
+      });
+    }
+    res.status(200).json({
+      success: true,
+      data: bootcamp,
+    });
+  } catch (error) {
+    res.status(400).json({
+      success: false,
+      error: error.message,
+    });
+  }
 };
 
-export const deleteBootcamp = (req, res, next) => {
-  res
-    .status(200)
-    .json({ success: true, msg: `Delete bootcamp ${req.params.id}` });
+export const deleteBootcamp = async (req, res, next) => {
+  try {
+    const bootcamp = await model.findByIdAndDelete(req.params.id);
+    if (!bootcamp) {
+      res.status(400).json({
+        success: false,
+      });
+    }
+    res.status(200).json({
+      success: true,
+      data: `Bootcamp ${req.params.id} deleted successfully!`,
+    });
+  } catch (error) {
+    res.status(400).json({
+      success: false,
+      error: error.message,
+    });
+  }
 };
